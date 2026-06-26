@@ -22,9 +22,7 @@ void enfileirar(Fila* f, PCB* p) {
 }
 
 PCB* desenfileirar(Fila* f) {
-    if (fila_vazia(f)) {
-        return NULL;
-    }
+    if (fila_vazia(f)) return NULL;
     PCB* p = f->itens[f->inicio];
     f->inicio = (f->inicio + 1) % MAX_FILA;
     f->tamanho--;

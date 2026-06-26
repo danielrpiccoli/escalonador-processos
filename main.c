@@ -1,21 +1,39 @@
 #include <stdio.h>
-#include "fila.h"
+#include <stdlib.h>
+#include <time.h>
+#include "config.h"
+#include "processo.h"
+#include "escalonador.h"
 
 int main() {
-    Fila f;
-    fila_init(&f);
+    srand(time(NULL));
 
-    PCB a = {.pid = 1, .prioridade = 0};
-    PCB b = {.pid = 2, .prioridade = 0};
+    int n = MAX_PROCESSOS;
+    PCB* todos[MAX_PROCESSOS];
 
-    enfileirar(&f, &a);
-    enfileirar(&f, &b);
+    /* Cria os processos com chegadas espalhadas no tempo */
+    int chegada = 0;
+    for (int i = 0; i < n; i++) {
+        todos[i] = criar_processo(i + 1, 1, chegada);
+        chegada += rand() % 4;   /* proximo chega de 0 a 3 ticks depois */
+    }
 
-    PCB* x = desenfileirar(&f);
-    printf("Saiu o PID: %d\n", x->pid);  // espera 1
+    /* Mostra a tabela de processos antes de simular */
+    printf("===== PROCESSOS CRIADOS =====\n");
+    for (int i = 0; i < n; i++) {
+        printf("PID %d | chegada=%d | servico=%d | io=%s | pede_io_apos=%d\n",
+               todos[i]->pid, todos[i]->instante_chegada,
+               todos[i]->tempo_servico, nome_io(todos[i]->tipo_io),
+               todos[i]->instante_io);
+    }
 
-    x = desenfileirar(&f);
-    printf("Saiu o PID: %d\n", x->pid);  // espera 2
+    /* Inicializa e roda UMA vez */
+    Escalonador e;
+    escalonador_init(&e, n);
+    simular(&e, todos, n);
+
+    /* Libera memoria */
+    for (int i = 0; i < n; i++) free(todos[i]);
 
     return 0;
 }
