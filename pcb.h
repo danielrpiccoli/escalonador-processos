@@ -20,7 +20,7 @@ typedef enum {
 typedef struct {
     int pid;
     int ppid;
-    int prioroidade; // prioridade 0 = alta ou 1 = baixa
+    int prioridade; // prioridade 0 = alta ou 1 = baixa
     Status status;
 
     int tempo_servico; // total de cpu que o processo precisa
